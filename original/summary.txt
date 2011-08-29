@@ -1,0 +1,53 @@
+A simple comparison of R and Python (statsmodels) for doing some
+exploratory data analysis and fitting of simple OLS models. 
+
+This is a rather condensed version of an analysis I did in a  
+statistics course. It uses CPS data to look at wage differences
+according to gender, examining first a baseline simple model 
+and then successively more complex models.
+
+For the OLS models R is much easier to use than Python. In 
+python the design matrices must be constructed explicitly, 
+which it both painstaking and annoying for complicated
+models. Furthermore, the resulting coefficient fits are 
+unlabelled. Python also doesn't have an anova command like
+in R to compare between nested models. 
+
+There is also some simple exploratory, non-model based analysis. 
+In this area R clearly dominates. Python currently doesn't have
+one of the main graphical exploratory tools I used, lowess, and
+it doesn't print the contents of matrices in a user friendly 
+manner.
+
+Both sets of code are used best when cut and pasted into their
+respective gui's. In R's case the standard R gui, and in Python's
+case the IPython qtconsole. Non-gui interpreters are generally
+much more frustrating to use for interactive data analysis, which
+is how these analyses were generated and explored.
+
+In fact, using Python without the IPython qtconsole is practically
+impossible for this sort of cut and paste, interactive analysis. 
+The shell IPython doesn't allow it because it automatically adds
+whitespace on multiline bits of code, breaking pre-formatted code's
+alignment. Cutting and pasting works for the standard python shell,
+but then you lose all the advantages of IPython. 
+
+Other issues I ran into were:
+
+*Inability to easily add new columns and rows to data. (However, 
+this will hopefully be fixed with pandas, and additionally it 
+wasn't an issue for me in this analysis.) 
+
+*Python doesn't pretty print its arrays in any way. This makes it
+much more difficult to inspect output from interactive data
+analysis if the user was just shoving results/summary statistics
+into a single array. 
+
+Even if you use the %precision magic in IPython, that only
+helps so much because numpy prints numpy arrays by row instead
+of by column. The lack of being able to name rows and columns 
+after array creation is also an impediment to analysis. 
+
+*No matplotlib keyboard shortcuts for closing windows. This makes it
+annoying to open a plot and then have to move your fingers away from
+the keyboard to close the plot. 

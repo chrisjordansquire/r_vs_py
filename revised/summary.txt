@@ -1,0 +1,69 @@
+A simple comparison of R and Python (statsmodels) for doing some
+exploratory data analysis and fitting of simple OLS models. 
+
+See summary.txt in the folder for the original analysis first. 
+This document only gives corrections/suggestions/changes
+relative to the original analysis. 
+
+-------------------------------------------------------------
+Compared to the original .r and .py files, in these revised version:
+-The R code was cleaned up because I realized I didn't need to use
+    as.factor if I made the relevant variables into factors
+-The python code was cleaned up by computing the 'sub-design matrices'
+    associated with each factor variable before hand and stashing
+    them in a dictionary
+-Names were added to the variables in the regression by creating them
+    from the calls to sm.categorical and stashing them in a dictionary
+
+Notably, the helper fucntions and stashing of the pieces of design matrices
+simplified the calls for model fitting, but they didn't noticeably shorten
+the code. They also required a small increase in complexity. (In terms of the
+data structures and function calls used to create the list of names and
+the design matrices.) 
+--------------------------------------------------------------
+
+Comments:
+
+***Pasting without autoindent can be done in the shell IPython and not
+just the IPython qtconsole. The relevant commands are paste and cpaste. 
+I found cpaste to be more what I was looking for, but mileage
+may vary. 
+
+(Though the shell IPython still has the limitation that when hitting
+the up arrow key you cannot recall multi-line pasted inputs as a 
+single block. You can do that in the IPython qtconsole.) 
+
+***There are some options for pretty printing a matrix. One is to adjust
+settings in np.set_printoptions as needed, and the other is to use 
+sm.iolib.SimpleTable from statsmodels. 
+
+(In the future the addition of pandas to statsmodels should alleviate 
+this as well.) 
+
+***The user can add names to the variables in a statsmodels regression
+by using the xname option on a regression results object. However, the
+user must supply the names. In particular, this means keeping track 
+of the levels for a categorical variable. 
+
+***One can simplify the construction of design matrices by, at the
+beginning of the analysis, creating a dictionary that associates
+variable names with parts of the design matrix associate with each 
+variable. Then a helper function can call np.hstack to combine 
+these sub-pieces of the design matrix into a whole design matrix. 
+
+A similar strategy can be used to keep track of the names associated with
+each variable. (In particular the names for each level for a categorical
+variable.) 
+
+However, that method doesn't allow subsetting of the data. The problem 
+is that for some subsets of the data not all levels for categorical 
+variable will be present. If you used the same matrices and names as 
+for the full dataset you'd have columns all all 0's in the design 
+matrix or (if those columns were eliminated) too many names. 
+
+Creating a function for generating names and design matrices that
+can take a subset of the data is more involved. (And I did not implement
+it.) In particular, it would have to generate both the names and the
+design matrix together, as well as keep track of what variables were
+categorical (and hence needed sm.categorical called) and which were not.
+

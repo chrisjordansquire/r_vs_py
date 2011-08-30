@@ -36,8 +36,11 @@ indm<-which(hrdat$sex==1)
 #The columns numbers correspond to GEDIV, educ, marstat, sex, occ,
 #ind, race, hispanic, disabled, and PTFT
 
-factor_indices <- c(3,5,6,7,17,18,20,21,23,25)
+tmp<-rep("female", length(hrdat$sex))
+tmp[hrdat$sex==1]="male"
+hrdat$sex <- factor(tmp)
 
+factor_indices <- c(3,5,6,17,18,20,21,23,25)
 for(i in factor_indices){
     hrdat[,i] <- factor(hrdat[,i])
 }
@@ -92,17 +95,16 @@ model3<-lm(log(hrwage)~ sex+educ+PTFT+age +I(age^2)+marstat+GEDIV+race+
 #expanded for middle age workers, and then contracted again.)
 
 model7.1<-lm(log(hrwage)~sex+educ+PTFT+age+I(age^2), 
-        data = hrdat[hrdat$age<=30,] , weights=A_ERNLWT )
+        data = subset(hrdat, age<=30), weights=A_ERNLWT )
 
 model7.2<-lm(log(hrwage)~sex+educ+PTFT+age+I(age^2), 
-        data = hrdat[hrdat$age<=40 & hrdat$age>30,] , weights=A_ERNLWT )
+        data = subset(hrdat, age>30 & age<=40), weights=A_ERNLWT )
 
 model7.3<-lm(log(hrwage)~sex+educ+PTFT+age+I(age^2), 
-        data = hrdat[hrdat$age<=50 & hrdat$age>40,] , weights=A_ERNLWT )
+        data = subset(hrdat, age>40 & age<=50), weights=A_ERNLWT )
 
 model7.4<-lm(log(hrwage)~sex+educ+PTFT+age+I(age^2), 
-        data = hrdat[hrdat$age>50,] , weights=A_ERNLWT )
-
+        data = subset(hrdat, age>50), weights=A_ERNLWT )
 
 
 ####
@@ -115,38 +117,19 @@ model7.4<-lm(log(hrwage)~sex+educ+PTFT+age+I(age^2),
 #The matrix wocc stores all of that, and 
 #Use xtable to format tables in latex
 
-lab<-sort(unique(hrdat$oc))
-occrow<-length(unique(hrdat$oc))
-wocc<-matrix(rep(0,4*occrow),nrow=occrow, ncol=4)
-for(i in 1:length(lab)){
-	tmp<-which(hrdat$sex==1 & hrdat$occ==lab[i])		
-	
-	if(length(tmp)>0){
-		wocc[i,1]<-sum(hrdat$A_ERNLWT[tmp])
-		wocc[i,2]<-weighted.mean(hrdat$hrwage[tmp], hrdat$A_ERNLWT[tmp])	
-	}
-	tmp<-which(hrdat$sex==2 & hrdat$occ==lab[i])		
-	if(length(tmp)>0){
-		wocc[i,3]<-sum(hrdat$A_ERNLWT[tmp])
-		wocc[i,4]<-weighted.mean(hrdat$hrwage[tmp], hrdat$A_ERNLWT[tmp])	
-	}
+sum_stat<-function(x){
+	tmp1 <- sum(x$A_ERNLWT)
+	tmp2 <- weighted.mean(x$hrwage, x$A_ERNLWT)
+	c(survey.wt=tmp1, avr.hr.wage=tmp2)
 }
 
-#These were just some quick computations to make sure wocc had
-#the values I thought it had. Nothing more embarassing than 
-#bad statistics because you didn't double-check your output. 
+split.by <-list(hrdat$sex, hrdat$occ)
+wocc<-split(hrdat, split.by)
 
-males = hrdat$sex == 1
-females = hrdat$sex ==2
+wocc <-lapply(wocc, sum_stat)
+wocc<-do.call(rbind, wocc)
 
-mean(hrdat$hrwage[males])
-weighted.mean(hrdat$hrwage[males], hrdat$A_ERNLWT[males])
-sum(wocc[,1]*wocc[,2])/sum(wocc[,1])
-weighted.mean(hrdat$hrwage[females],hrdat$A_ERNLWT[females])
-sum(wocc[-6,1]*wocc[-6,4])/sum(wocc[-6,1])
-
-
-
+wocc<-split(data.frame(wocc), rep(levels(hrdat$sex), 9))
 
 #Plotting hourly wage versus age and fitting a lowess curve to it. 
 #Done sepereately for both males and females. Just to get a feel for 

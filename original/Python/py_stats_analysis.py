@@ -25,13 +25,6 @@ import scikits.statsmodels.api as sm
 import matplotlib.pyplot as plt
 import scipy.stats as sps
 
-"""
-Import the data using the loadtable function I've written.
-As of now it hasn't been put into the main numpy repo, but it
-can be downloaded from my github account. The file can also be
-read in by various other numpy text loading functions.
-"""
-
 dat = np.genfromtxt('marchCPS_2010.txt', names=True, dtype=None,
                         missing_values='NA')
 

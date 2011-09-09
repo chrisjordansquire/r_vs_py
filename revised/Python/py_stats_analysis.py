@@ -24,14 +24,6 @@ import numpy as np
 import scikits.statsmodels.api as sm
 import matplotlib.pyplot as plt
 import scipy.stats as sps
-import pandas as pa
-
-"""
-Import the data using the loadtable function I've written.
-As of now it hasn't been put into the main numpy repo, but it
-can be downloaded from my github account. The file can also be
-read in by various other numpy text loading functions.
-"""
 
 dat = np.genfromtxt('marchCPS_2010.txt', names=True, dtype=None,
                         missing_values='NA')
@@ -276,19 +268,19 @@ for i,occ in enumerate(occs):
 
 print wocc
 
-#In the next iteration of pandas the above computations can be done more
-#concisely and in a more readable manner.
-#The following example code showing this is due to Wes McKinney
+# In the next iteration of pandas the above computations can be done more
+# concisely and in a more readable manner.
+# The following example code showing this is due to Wes McKinney
 #
-#hrdf = pa.DataFrame(hrdat)
-#hrdf['sex'] = np.where(hrdf['sex'] == 1, 'male', 'female')
+# hrdf = pa.DataFrame(hrdat)
+# hrdf['sex'] = np.where(hrdf['sex'] == 1, 'male', 'female')
 #
-#def compute_stats(group):
-#    sum_weight = group['A_ERNLWT'].sum()
-#    wave_hrwage = (group['hrwage'] * group['A_ERNLWT']).sum()/sum_weight
-#    return Series({'sum_weight':sum_weight, 'wave_hrwage':wave_hrwage})
+# def compute_stats(group):
+#     sum_weight = group['A_ERNLWT'].sum()
+#     wave_hrwage = (group['hrwage'] * group['A_ERNLWT']).sum()/sum_weight
+#     return Series({'sum_weight':sum_weight, 'wave_hrwage':wave_hrwage})
 #
-#pawocc = hrdf.groupby(['sex','occ']).apply(compute_stats)
+# pawocc = hrdf.groupby(['sex','occ']).apply(compute_stats)
 
 
 
